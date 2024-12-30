@@ -13,11 +13,13 @@ public class PlayerController : MonoBehaviour
     
     // Components
     private Rigidbody rb = null;
+    private BuildPointManager buildPointManager = null;
 
     // Start is called before the first frame update
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        buildPointManager = FindFirstObjectByType<BuildPointManager>();
     }
 
     // Update is called once per frame
@@ -41,6 +43,17 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
+        }
+
+        Transform nearestBuildPoint = buildPointManager.GetNearestBuildPoint(transform.position);
+        if (nearestBuildPoint != null)
+        {
+            Vector3 nearestBuildPointPos = nearestBuildPoint.position;
+            Debug.Log("Can build at: " + nearestBuildPoint.name + " with position: " + nearestBuildPointPos);
+        }
+        else
+        {
+            Debug.Log("No build point found");
         }
     }
 
