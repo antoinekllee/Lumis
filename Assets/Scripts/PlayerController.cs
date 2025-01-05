@@ -45,15 +45,9 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        Transform nearestBuildPoint = buildPointManager.GetNearestBuildPoint(transform.position);
-        if (nearestBuildPoint != null)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            Vector3 nearestBuildPointPos = nearestBuildPoint.position;
-            Debug.Log("Can build at: " + nearestBuildPoint.name + " with position: " + nearestBuildPointPos);
-        }
-        else
-        {
-            Debug.Log("No build point found");
+            buildPointManager.AttemptBuildAtNearestBuildPoint(); 
         }
     }
 

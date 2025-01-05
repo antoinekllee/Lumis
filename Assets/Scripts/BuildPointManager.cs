@@ -2,19 +2,26 @@ using UnityEngine;
 
 public class BuildPointManager : MonoBehaviour
 {
-    [SerializeField] private float buildPointRange = 5.0f; // Max distance between player and build point to build here
+    [Header("Defenders")]
+    [SerializeField] private GameObject laserDefenderPrefab = null;
+
+    [Header("Settings")]
+    [SerializeField] private float buildPointRange = 1.5f; // Max distance between player and build point to build here
+
+    private Transform nearestBuildPoint = null; 
 
     private Transform[] buildPointTransforms = new Transform[0];
+    private Transform playerTransform = null;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         buildPointTransforms = GetComponentsInChildren<Transform>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    public Transform GetNearestBuildPoint(Vector3 playerPos)
+    private Transform GetNearestBuildPoint(Vector3 playerPos)
     {
-        Transform nearestBuildPoint = null;
+        // Transform nearestBuildPoint = null;
         float nearestDistance = Mathf.Infinity;
 
         foreach (Transform buildPoint in buildPointTransforms)
@@ -29,6 +36,7 @@ public class BuildPointManager : MonoBehaviour
 
         if (nearestDistance <= buildPointRange)
         {
+
             return nearestBuildPoint;
         }
         else
@@ -37,9 +45,24 @@ public class BuildPointManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    private bool IsNearestBuildPointOpen()
+    {
+        return nearestBuildPoint.childCount == 0; 
+    }
+
+    public void AttemptBuildAtNearestBuildPoint()
+    {
+        if (!IsNearestBuildPointOpen())
+        {
+            Debug.LogError("Cannot build here, build point is occupied.");
+            return;
+        }
+
+        Instantiate(laserDefenderPrefab, nearestBuildPoint.position, Quaternion.identity, nearestBuildPoint);
+    }
+
     private void Update()
     {
-        
+        GetNearestBuildPoint(playerTransform.position); 
     }
 }
